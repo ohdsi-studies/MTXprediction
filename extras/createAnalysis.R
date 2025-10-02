@@ -66,7 +66,7 @@ cgModuleSpecifications <- cgModuleSettingsCreator$createModuleSpecifications()
 
 
 #===============================================================================================
-#Strategus summarize
+#ANALYSIS SPECIFICATIONS CDM MODULES
 #===============================================================================================
 analysisSpecifications <- createEmptyAnalysisSpecificiations() |>
   addSharedResources(cohortSharedResourcesSpecifications) |>
