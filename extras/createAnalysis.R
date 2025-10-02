@@ -44,5 +44,23 @@ cdModuleSpecifications <- cdModuleSettingsCreator$createModuleSpecifications(
 #COHORT GENERATOR
 #============================================================================================
 
+cgModuleSettingsCreator <- CohortGeneratorModule$new()
 
+# Create the settings & validate them
+cohortSharedResourcesSpecifications <- cgModuleSettingsCreator$createCohortSharedResourceSpecifications(cohortDefinitionSet)
+cgModuleSettingsCreator$validateCohortSharedResourceSpecifications(cohortSharedResourcesSpecifications)
+
+cgModuleSpecifications <- cgModuleSettingsCreator$createModuleSpecifications()
+
+#===============================================================================================
+#CohortIncidence
+#===============================================================================================
+
+#===============================================================================================
+#Treatment Patterns
+#===============================================================================================
+
+#===============================================================================================
+#Characterization
+#===============================================================================================
 
