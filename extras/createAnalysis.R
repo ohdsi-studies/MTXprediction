@@ -16,9 +16,9 @@ ROhdsiWebApi::authorizeWebApi(
   webApiPassword =  keyring::key_get('webApiPassword', 'all')
     )
 
-# get the cohort ids from ATLAS used as the target, outcome and predictors
+# get the cohort ids from ATLAS used as the targets and outcomes
 cohortDefinitionSet <- ROhdsiWebApi::exportCohortDefinitionSet(
-  cohortIds = c(targetId, outcomeId, predictorIds), 
+  cohortIds = c(targetIds, outcomeIds), 
   generateStats = T,
   baseUrl = Sys.getenv('baseUrl')
   )
