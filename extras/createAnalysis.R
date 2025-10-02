@@ -57,10 +57,27 @@ cgModuleSpecifications <- cgModuleSettingsCreator$createModuleSpecifications()
 #===============================================================================================
 
 #===============================================================================================
-#Treatment Patterns
+#TreatmentPatterns
 #===============================================================================================
 
 #===============================================================================================
 #Characterization
 #===============================================================================================
+
+
+#===============================================================================================
+#Strategus summarize
+#===============================================================================================
+analysisSpecifications <- createEmptyAnalysisSpecificiations() |>
+  addSharedResources(cohortSharedResourcesSpecifications) |>
+  addCohortDiagnosticsModuleSpecifications(cdModuleSpecifications) |>
+  addCohortGeneratorModuleSpecifications(cgModuleSpecifications) |>
+  addCohortIncidenceModuleSpecifications(ciModuleSpecifications) |>
+  addTreatmentPatternsModuleSpecifications(tpModuleSpecifications) |>
+  addCharacterizationModuleSpecifications(cModuleSpecifications) 
+
+ParallelLogger::saveSettingsToJson(
+  object = analysisSpecifications,
+  fileName = "inst/study_execution_jsons/validation.json"
+)
 
