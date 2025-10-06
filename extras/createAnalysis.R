@@ -136,10 +136,10 @@ cModuleSpecifications <- cModuleSettingsCreator$createModuleSpecifications(
   outcomeWashoutDays = 365,
   dechallengeStopInterval = 30,
   dechallengeEvaluationWindow = 30,
-  riskWindowStart = timeAtRisks$riskWindowStart, 
-  startAnchor = timeAtRisks$startAnchor, 
-  riskWindowEnd = timeAtRisks$riskWindowEnd, 
-  endAnchor = timeAtRisks$endAnchor,
+  riskWindowStart = 0, 
+  startAnchor = 'cohort start', 
+  riskWindowEnd = 365, 
+  endAnchor = 'cohort start,
   covariateSettings = FeatureExtraction::createDefaultCovariateSettings(),
   minCharacterizationMean = .01
 )
