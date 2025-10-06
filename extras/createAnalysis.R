@@ -23,18 +23,6 @@ cohortDefinitionSet <- ROhdsiWebApi::exportCohortDefinitionSet(
   baseUrl = Sys.getenv('baseUrl')
   )
 
-#============================================================================================
-#COHORT GENERATOR
-#============================================================================================
-
-cgModuleSettingsCreator <- CohortGeneratorModule$new()
-
-# Create the settings & validate them
-cohortSharedResourcesSpecifications <- cgModuleSettingsCreator$createCohortSharedResourceSpecifications(cohortDefinitionSet)
-cgModuleSettingsCreator$validateCohortSharedResourceSpecifications(cohortSharedResourcesSpecifications)
-
-cgModuleSpecifications <- cgModuleSettingsCreator$createModuleSpecifications()
-
 #=========================================================================================
 #COHORT DIAGNOSTICS SPECIFICATIONS
 #========================================================================================
@@ -53,6 +41,18 @@ cdModuleSpecifications <- cdModuleSettingsCreator$createModuleSpecifications(
   runTemporalCohortCharacterization = TRUE
 )
 
+#============================================================================================
+#COHORT GENERATOR
+#============================================================================================
+
+cgModuleSettingsCreator <- CohortGeneratorModule$new()
+
+# Create the settings & validate them
+cohortSharedResourcesSpecifications <- cgModuleSettingsCreator$createCohortSharedResourceSpecifications(cohortDefinitionSet)
+cgModuleSettingsCreator$validateCohortSharedResourceSpecifications(cohortSharedResourcesSpecifications)
+
+cgModuleSpecifications <- cgModuleSettingsCreator$createModuleSpecifications()
+
 #===============================================================================================
 #CohortIncidence
 #===============================================================================================
@@ -68,6 +68,27 @@ targets <- list(
 )
 
 outcomes <- list(
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
   CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
   CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
   CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
@@ -105,56 +126,39 @@ ciModuleSpecifications <- ciModuleSettingsCreator$createModuleSpecifications(
 #===============================================================================================
 #TreatmentPatterns
 #===============================================================================================
+# Give a name to the outcome ID set 
+oList <- cohortDefinitionSet %>%
+  filter(.data$cohortId %in% outcomeIds) %>%
+  mutate(outcomeCohortId = cohortId, outcomeCohortName = cohortName) %>%
+  select(outcomeCohortId, outcomeCohortName) %>%
+  mutate(cleanWindow = 0)
 
-tpModuleSettingCreator <- TreatmentPatternsModule$new()
+# Create dataframe for TreatmentPatterns
+cohorts <- cohortDefinitionSet %>%
+  select (cohortId, cohortName)
+
+cohorts$type <- ifelse(cohorts$cohortId %in% oList$outcomeCohortId, 'event', 'target')
+
+# Remove certain IDs to try to overcome stuck
+#cohorts = cohorts%>%filter(cohortId>...)
+
+tpModuleSettingsCreator <- TreatmentPatternsModule$new()
 tpModuleSpecifications <- tpModuleSettingsCreator$createModuleSpecifications(
-
-TreatmentPatternsModule$execute(
-connectionDetails,
-analysisSpecifications,
-executionSettings
+  cohorts, 
+  includeTreatments = "startDate",
+  indexDateOffset = 0,
+  minEraDuration = 1,
+  splitEventCohorts = NULL,
+  splitTime = NULL,
+  eraCollapseSize = 7,
+  combinationWindow = 1,
+  minPostCombinationDuration = 1,
+  filterTreatments = "All",
+  maxPathLength = 7,
+  ageWindow = 10,
+  minCellCount = 5,
+  censorType = "minCellCount"
 )
-  
-TreatmentPatternsModule$createResultsDataModel(
-resultsConnectionDetails,
-resultsDatabaseSchema,
-tablePrefix = self$tablePrefix
-)
-
-TreatmentPatternsModule$getResultsDataModelSpecification(tablePrefix = "")
-
-TreatmentPatternsModule$uploadResults(
-resultsConnectionDetails,
-analysisSpecifications,
-resultsDataModelSettings
-)
-
-TreatmentPatternsModule$createModuleSpecifications(
-cohorts,
-includeTreatments = NULL,
-indexDateOffset = NULL,
-minEraDuration = 0,
-splitEventCohorts = NULL,
-splitTime = NULL,
-eraCollapseSize = 30,
-combinationWindow = 30,
-minPostCombinationDuration = 30,
-filterTreatments = "First",
-maxPathLength = 5,
-ageWindow = 5,
-minCellCount = 1,
-censorType = "minCellCount",
-overlapMethod = "truncate",
-concatTargets = TRUE,
-startAnchor = "startDate",
-windowStart = 0,
-endAnchor = "endDate",
-windowEnd = 0
-)
-
-TreatmentPatternsModule$validateModuleSpecifications(moduleSpecifications)
-
-TreatmentPatternsModule$clone(deep = FALSE)
 
 #===============================================================================================
 #Characterization
@@ -175,6 +179,10 @@ cModuleSpecifications <- cModuleSettingsCreator$createModuleSpecifications(
   covariateSettings = FeatureExtraction::createDefaultCovariateSettings(),
   minCharacterizationMean = .01
 )
+
+#===============================================================================================
+#PatientLevelPrediction
+#===============================================================================================
 
 #===============================================================================================
 #ANALYSIS SPECIFICATIONS CDM MODULES
