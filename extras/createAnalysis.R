@@ -115,7 +115,7 @@ irDesign <- CohortIncidence::createIncidenceDesign(
     ageBreaks = seq(0, 110, by = 10)
   )
 )
-cohortIncidenceModuleSpecifications <- ciModuleSettingsCreator$createModuleSpecifications(
+ciModuleSpecifications <- ciModuleSettingsCreator$createModuleSpecifications(
   irDesign = irDesign$toList()
 )
 
@@ -127,15 +127,11 @@ cohortIncidenceModuleSpecifications <- ciModuleSettingsCreator$createModuleSpeci
 #Characterization
 #===============================================================================================
 cModuleSettingsCreator <- CharacterizationModule$new()
-allCohortIdsExceptOutcomes <- cohortDefinitionSet %>%
-  filter(!cohortId %in% outcomes$cohortId) %>%
-  pull(cohortId)
-
-characterizationModuleSpecifications <- cModuleSettingsCreator$createModuleSpecifications(
-  targetIds = allCohortIdsExceptOutcomes,
-  outcomeIds = outcomes$cohortId,
+cModuleSpecifications <- cModuleSettingsCreator$createModuleSpecifications(
+  targetIds = targetIds,
+  outcomeIds = outcomeIds,
   minPriorObservation = 365,
-  outcomeWashoutDays = rep(365, nrow(outcomes)),
+  outcomeWashoutDays = 365,
   dechallengeStopInterval = 30,
   dechallengeEvaluationWindow = 30,
   riskWindowStart = timeAtRisks$riskWindowStart, 
