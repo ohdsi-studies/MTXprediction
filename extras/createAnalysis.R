@@ -109,6 +109,52 @@ ciModuleSpecifications <- ciModuleSettingsCreator$createModuleSpecifications(
 tpModuleSettingCreator <- TreatmentPatternsModule$new()
 tpModuleSpecifications <- tpModuleSettingsCreator$createModuleSpecifications(
 
+TreatmentPatternsModule$execute(
+connectionDetails,
+analysisSpecifications,
+executionSettings
+)
+  
+TreatmentPatternsModule$createResultsDataModel(
+resultsConnectionDetails,
+resultsDatabaseSchema,
+tablePrefix = self$tablePrefix
+)
+
+TreatmentPatternsModule$getResultsDataModelSpecification(tablePrefix = "")
+
+TreatmentPatternsModule$uploadResults(
+resultsConnectionDetails,
+analysisSpecifications,
+resultsDataModelSettings
+)
+
+TreatmentPatternsModule$createModuleSpecifications(
+cohorts,
+includeTreatments = NULL,
+indexDateOffset = NULL,
+minEraDuration = 0,
+splitEventCohorts = NULL,
+splitTime = NULL,
+eraCollapseSize = 30,
+combinationWindow = 30,
+minPostCombinationDuration = 30,
+filterTreatments = "First",
+maxPathLength = 5,
+ageWindow = 5,
+minCellCount = 1,
+censorType = "minCellCount",
+overlapMethod = "truncate",
+concatTargets = TRUE,
+startAnchor = "startDate",
+windowStart = 0,
+endAnchor = "endDate",
+windowEnd = 0
+)
+
+TreatmentPatternsModule$validateModuleSpecifications(moduleSpecifications)
+
+TreatmentPatternsModule$clone(deep = FALSE)
 
 #===============================================================================================
 #Characterization
