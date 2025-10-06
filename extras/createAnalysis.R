@@ -23,22 +23,6 @@ cohortDefinitionSet <- ROhdsiWebApi::exportCohortDefinitionSet(
   baseUrl = Sys.getenv('baseUrl')
   )
 
-#=========================================================================================
-#COHORT DIAGNOSTICS SPECIFICATIONS
-#========================================================================================
-
-cdModuleSettingsCreator <- CohortDiagnosticsModule$new()
-cdModuleSpecifications <- cdModuleSettingsCreator$createModuleSpecifications(
-  runInclusionStatistics = TRUE,
-  runIncludedSourceConcepts = TRUE,
-  runOrphanConcepts = TRUE,
-  runTimeSeries = FALSE,
-  runVisitContext = TRUE,
-  runBreakdownIndexEvents = TRUE,
-  runIncidenceRate = TRUE,
-  runCohortRelationship = TRUE,
-  runTemporalCohortCharacterization = TRUE
-)
 
 #============================================================================================
 #COHORT GENERATOR
@@ -52,10 +36,88 @@ cgModuleSettingsCreator$validateCohortSharedResourceSpecifications(cohortSharedR
 
 cgModuleSpecifications <- cgModuleSettingsCreator$createModuleSpecifications()
 
+#=========================================================================================
+#COHORT DIAGNOSTICS SPECIFICATIONS
+#========================================================================================
+
+cdModuleSettingsCreator <- CohortDiagnosticsModule$new()
+cdModuleSpecifications <- cdModuleSettingsCreator$createModuleSpecifications(
+  cohortIds = cohortDefinitionSet,
+  runInclusionStatistics = TRUE,
+  runIncludedSourceConcepts = TRUE,
+  runOrphanConcepts = TRUE,
+  runTimeSeries = FALSE,
+  runVisitContext = TRUE,
+  runBreakdownIndexEvents = TRUE,
+  runIncidenceRate = TRUE,
+  runCohortRelationship = TRUE,
+  runTemporalCohortCharacterization = TRUE
+)
 #===============================================================================================
 #CohortIncidence
 #===============================================================================================
+ciModuleSettingsCreator <- CohortIncidenceModule$new()
+exposureIndicationIds <- cohortDefinitionSet %>%
+  filter(!cohortId %in% outcomes$cohortId & isSubset) %>%
+  pull(cohortId)
+targetList <- lapply(
+  exposureIndicationIds,
+  function(cohortId) {
+    CohortIncidence::createCohortRef(
+      id = cohortId, 
+      name = cohortDefinitionSet$cohortName[cohortDefinitionSet$cohortId == cohortId]
+    )
+  }
+)
+outcomeList <- lapply(
+  seq_len(nrow(outcomes)),
+  function(i) {
+    CohortIncidence::createOutcomeDef(
+      id = i, 
+      name = cohortDefinitionSet$cohortName[cohortDefinitionSet$cohortId == outcomes$cohortId[i]], 
+      cohortId = outcomes$cohortId[i], 
+      cleanWindow = outcomes$cleanWindow[i]
+    )
+  }
+)
 
+tars <- list()
+for (i in seq_len(nrow(timeAtRisks))) {
+  tars[[i]] <- CohortIncidence::createTimeAtRiskDef(
+    id = i, 
+    startWith = gsub("cohort ", "", timeAtRisks$startAnchor[i]), 
+    endWith = gsub("cohort ", "", timeAtRisks$endAnchor[i]), 
+    startOffset = timeAtRisks$riskWindowStart[i],
+    endOffset = timeAtRisks$riskWindowEnd[i]
+  )
+}
+analysis1 <- CohortIncidence::createIncidenceAnalysis(
+  targets = exposureIndicationIds,
+  outcomes = seq_len(nrow(outcomes)),
+  tars = seq_along(tars)
+)
+studyStartDateWithHyphens <- gsub("(\\d{4})(\\d{2})(\\d{2})", "\\1-\\2-\\3", studyStartDate)
+studyEndDateWithHyphens <- gsub("(\\d{4})(\\d{2})(\\d{2})", "\\1-\\2-\\3", studyEndDate)
+irStudyWindow <- CohortIncidence::createDateRange(
+  startDate = studyStartDateWithHyphens,
+  endDate = studyEndDateWithHyphens
+)
+irDesign <- CohortIncidence::createIncidenceDesign(
+  targetDefs = targetList,
+  outcomeDefs = outcomeList,
+  tars = tars,
+  analysisList = list(analysis1),
+  studyWindow = irStudyWindow,
+  strataSettings = CohortIncidence::createStrataSettings(
+    byYear = TRUE,
+    byGender = TRUE,
+    byAge = TRUE,
+    ageBreaks = seq(0, 110, by = 10)
+  )
+)
+cohortIncidenceModuleSpecifications <- ciModuleSettingsCreator$createModuleSpecifications(
+  irDesign = irDesign$toList()
+)
 
 #===============================================================================================
 #TreatmentPatterns
@@ -64,7 +126,25 @@ cgModuleSpecifications <- cgModuleSettingsCreator$createModuleSpecifications()
 #===============================================================================================
 #Characterization
 #===============================================================================================
+cModuleSettingsCreator <- CharacterizationModule$new()
+allCohortIdsExceptOutcomes <- cohortDefinitionSet %>%
+  filter(!cohortId %in% outcomes$cohortId) %>%
+  pull(cohortId)
 
+characterizationModuleSpecifications <- cModuleSettingsCreator$createModuleSpecifications(
+  targetIds = allCohortIdsExceptOutcomes,
+  outcomeIds = outcomes$cohortId,
+  minPriorObservation = 365,
+  outcomeWashoutDays = rep(365, nrow(outcomes)),
+  dechallengeStopInterval = 30,
+  dechallengeEvaluationWindow = 30,
+  riskWindowStart = timeAtRisks$riskWindowStart, 
+  startAnchor = timeAtRisks$startAnchor, 
+  riskWindowEnd = timeAtRisks$riskWindowEnd, 
+  endAnchor = timeAtRisks$endAnchor,
+  covariateSettings = FeatureExtraction::createDefaultCovariateSettings(),
+  minCharacterizationMean = .01
+)
 
 #===============================================================================================
 #ANALYSIS SPECIFICATIONS CDM MODULES
