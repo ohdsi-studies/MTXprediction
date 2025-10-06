@@ -58,64 +58,55 @@ cdModuleSpecifications <- cdModuleSettingsCreator$createModuleSpecifications(
 #===============================================================================================
 
 ciModuleSettingsCreator <- CohortIncidenceModule$new()
-exposureIndicationIds <- cohortDefinitionSet %>%
-  filter(!cohortId %in% outcomes$cohortId & isSubset) %>%
-  pull(cohortId)
-targetList <- lapply(
-  exposureIndicationIds,
-  function(cohortId) {
-    CohortIncidence::createCohortRef(
-      id = cohortId, 
-      name = cohortDefinitionSet$cohortName[cohortDefinitionSet$cohortId == cohortId]
-    )
-  }
+targets <- list(
+  CohortIncidence::createCohortRef(id = , name = ""),
+  CohortIncidence::createCohortRef(id = , name = ""),
+  CohortIncidence::createCohortRef(id = , name = ""),
+  CohortIncidence::createCohortRef(id = , name = ""),
+  CohortIncidence::createCohortRef(id = , name = ""),
+  CohortIncidence::createCohortRef(id = , name = ""),
+  CohortIncidence::createCohortRef(id = , name = ""),
+  CohortIncidence::createCohortRef(id = , name = ""),
+  CohortIncidence::createCohortRef(id = , name = ""),
+  CohortIncidence::createCohortRef(id = , name = ""),
+  CohortIncidence::createCohortRef(id = , name = ""),
+  CohortIncidence::createCohortRef(id = , name = ""),
+  CohortIncidence::createCohortRef(id = , name = ""),
+  CohortIncidence::createCohortRef(id = , name = ""),
+  CohortIncidence::createCohortRef(id = , name = ""),
+  CohortIncidence::createCohortRef(id = , name = ""),
 )
-outcomeList <- lapply(
-  seq_len(nrow(outcomes)),
-  function(i) {
-    CohortIncidence::createOutcomeDef(
-      id = i, 
-      name = cohortDefinitionSet$cohortName[cohortDefinitionSet$cohortId == outcomes$cohortId[i]], 
-      cohortId = outcomes$cohortId[i], 
-      cleanWindow = outcomes$cleanWindow[i]
-    )
-  }
+outcomes <- list(
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
+  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999)
 )
 
-tars <- list()
-for (i in seq_len(nrow(timeAtRisks))) {
-  tars[[i]] <- CohortIncidence::createTimeAtRiskDef(
-    id = i, 
-    startWith = gsub("cohort ", "", timeAtRisks$startAnchor[i]), 
-    endWith = gsub("cohort ", "", timeAtRisks$endAnchor[i]), 
-    startOffset = timeAtRisks$riskWindowStart[i],
-    endOffset = timeAtRisks$riskWindowEnd[i]
-  )
-}
+tars <- list(
+  CohortIncidence::createTimeAtRiskDef(id = 1, startWith = "start", endWith = "end"),
+  CohortIncidence::createTimeAtRiskDef(id = 2, startWith = "start", endWith = "start", endOffset = 365)
+)
 analysis1 <- CohortIncidence::createIncidenceAnalysis(
-  targets = exposureIndicationIds,
-  outcomes = seq_len(nrow(outcomes)),
-  tars = seq_along(tars)
+  targets = c(,,,,,,),
+  outcomes = c(,,,,),
+  tars = c(1, 2)
 )
-studyStartDateWithHyphens <- gsub("(\\d{4})(\\d{2})(\\d{2})", "\\1-\\2-\\3", studyStartDate)
-studyEndDateWithHyphens <- gsub("(\\d{4})(\\d{2})(\\d{2})", "\\1-\\2-\\3", studyEndDate)
-irStudyWindow <- CohortIncidence::createDateRange(
-  startDate = studyStartDateWithHyphens,
-  endDate = studyEndDateWithHyphens
-)
+
 irDesign <- CohortIncidence::createIncidenceDesign(
-  targetDefs = targetList,
-  outcomeDefs = outcomeList,
+  targetDefs = targets,
+  outcomeDefs = outcomes,
   tars = tars,
   analysisList = list(analysis1),
-  studyWindow = irStudyWindow,
   strataSettings = CohortIncidence::createStrataSettings(
     byYear = TRUE,
-    byGender = TRUE,
-    byAge = TRUE,
-    ageBreaks = seq(0, 110, by = 10)
+    byGender = TRUE
   )
 )
+
 ciModuleSpecifications <- ciModuleSettingsCreator$createModuleSpecifications(
   irDesign = irDesign$toList()
 )
