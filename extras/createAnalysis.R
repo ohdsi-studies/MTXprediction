@@ -23,7 +23,6 @@ cohortDefinitionSet <- ROhdsiWebApi::exportCohortDefinitionSet(
   baseUrl = Sys.getenv('baseUrl')
   )
 
-
 #============================================================================================
 #COHORT GENERATOR
 #============================================================================================
@@ -53,6 +52,7 @@ cdModuleSpecifications <- cdModuleSettingsCreator$createModuleSpecifications(
   runCohortRelationship = TRUE,
   runTemporalCohortCharacterization = TRUE
 )
+
 #===============================================================================================
 #CohortIncidence
 #===============================================================================================
@@ -123,6 +123,10 @@ ciModuleSpecifications <- ciModuleSettingsCreator$createModuleSpecifications(
 #===============================================================================================
 #TreatmentPatterns
 #===============================================================================================
+
+tpModuleSettingCreator <- TreatmentPatternsModule$new()
+tpModuleSpecifications <- tpModuleSettingsCreator$createModuleSpecifications(
+
 
 #===============================================================================================
 #Characterization
