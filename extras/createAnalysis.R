@@ -56,6 +56,7 @@ cdModuleSpecifications <- cdModuleSettingsCreator$createModuleSpecifications(
 #===============================================================================================
 #CohortIncidence
 #===============================================================================================
+
 ciModuleSettingsCreator <- CohortIncidenceModule$new()
 exposureIndicationIds <- cohortDefinitionSet %>%
   filter(!cohortId %in% outcomes$cohortId & isSubset) %>%
@@ -126,6 +127,7 @@ ciModuleSpecifications <- ciModuleSettingsCreator$createModuleSpecifications(
 #===============================================================================================
 #Characterization
 #===============================================================================================
+
 cModuleSettingsCreator <- CharacterizationModule$new()
 cModuleSpecifications <- cModuleSettingsCreator$createModuleSpecifications(
   targetIds = targetIds,
@@ -145,6 +147,7 @@ cModuleSpecifications <- cModuleSettingsCreator$createModuleSpecifications(
 #===============================================================================================
 #ANALYSIS SPECIFICATIONS CDM MODULES
 #===============================================================================================
+
 analysisSpecifications <- createEmptyAnalysisSpecificiations() |>
   addSharedResources(cohortSharedResourcesSpecifications) |>
   addCohortDiagnosticsModuleSpecifications(cdModuleSpecifications) |>
