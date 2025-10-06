@@ -59,23 +59,14 @@ cdModuleSpecifications <- cdModuleSettingsCreator$createModuleSpecifications(
 
 ciModuleSettingsCreator <- CohortIncidenceModule$new()
 targets <- list(
-  CohortIncidence::createCohortRef(id = , name = ""),
-  CohortIncidence::createCohortRef(id = , name = ""),
-  CohortIncidence::createCohortRef(id = , name = ""),
-  CohortIncidence::createCohortRef(id = , name = ""),
-  CohortIncidence::createCohortRef(id = , name = ""),
-  CohortIncidence::createCohortRef(id = , name = ""),
-  CohortIncidence::createCohortRef(id = , name = ""),
-  CohortIncidence::createCohortRef(id = , name = ""),
-  CohortIncidence::createCohortRef(id = , name = ""),
-  CohortIncidence::createCohortRef(id = , name = ""),
-  CohortIncidence::createCohortRef(id = , name = ""),
-  CohortIncidence::createCohortRef(id = , name = ""),
-  CohortIncidence::createCohortRef(id = , name = ""),
-  CohortIncidence::createCohortRef(id = , name = ""),
-  CohortIncidence::createCohortRef(id = , name = ""),
-  CohortIncidence::createCohortRef(id = , name = ""),
+  CohortIncidence::createCohortRef(id = , name = "", cohortId = ),
+  CohortIncidence::createCohortRef(id = , name = "", cohortId = ),
+  CohortIncidence::createCohortRef(id = , name = "", cohortId = ),
+  CohortIncidence::createCohortRef(id = , name = "", cohortId = ),
+  CohortIncidence::createCohortRef(id = , name = "", cohortId = ),
+  CohortIncidence::createCohortRef(id = , name = "", cohortId = )
 )
+
 outcomes <- list(
   CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
   CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
