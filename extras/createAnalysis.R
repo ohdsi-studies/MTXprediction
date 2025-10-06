@@ -58,59 +58,21 @@ cgModuleSpecifications <- cgModuleSettingsCreator$createModuleSpecifications()
 #===============================================================================================
 
 ciModuleSettingsCreator <- CohortIncidenceModule$new()
-targets <- list(
-  CohortIncidence::createCohortRef(id = , name = "", cohortId = ),
-  CohortIncidence::createCohortRef(id = , name = "", cohortId = ),
-  CohortIncidence::createCohortRef(id = , name = "", cohortId = ),
-  CohortIncidence::createCohortRef(id = , name = "", cohortId = ),
-  CohortIncidence::createCohortRef(id = , name = "", cohortId = ),
-  CohortIncidence::createCohortRef(id = , name = "", cohortId = )
-)
-
-outcomes <- list(
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999),
-  CohortIncidence::createOutcomeDef(id = , name = "", cohortId = , cleanWindow = 9999)
-)
 
 tars <- list(
   CohortIncidence::createTimeAtRiskDef(id = 1, startWith = "start", endWith = "end"),
   CohortIncidence::createTimeAtRiskDef(id = 2, startWith = "start", endWith = "start", endOffset = 365)
 )
+
 analysis1 <- CohortIncidence::createIncidenceAnalysis(
-  targets = c(,,,,,,),
-  outcomes = c(,,,,),
+  targets = targetIds,
+  outcomes = outcomeIds,
   tars = c(1, 2)
 )
 
 irDesign <- CohortIncidence::createIncidenceDesign(
-  targetDefs = targets,
-  outcomeDefs = outcomes,
+  targetDefs = targetIds,
+  outcomeDefs = outcomeIds,
   tars = tars,
   analysisList = list(analysis1),
   strataSettings = CohortIncidence::createStrataSettings(
