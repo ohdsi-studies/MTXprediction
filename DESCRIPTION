@@ -1,0 +1,30 @@
+Package: MTXprediction
+Type: Package
+Title: Network MTXprediction Study
+Version: 0.0.0.9000
+Date: 2025-10-10
+Authors@R: (
+  person("Alexander", "Saelmans", email = "Saelmans@ohdsi.org", role = c("aut", "cre"))
+  )
+Maintainer: Alexander Saelmans <Saelmans@ohdsi.org>
+Description: Development and validation of a methotrexate prediction model
+License: Apache License 2.0
+VignetteBuilder: knitr
+Depends:
+  R (>= 3.3.0)
+Imports:
+  DatabaseConnector,
+  dplyr,
+  ggplot2,
+  ParallelLogger,
+  Strategus
+Suggests:
+  knitr,
+  markdown,
+  remotes,
+  rmarkdown,
+  testthat
+Remotes:
+  ohdsi/Strategus
+RoxygenNote: 7.3.2
+Encoding: UTF-8
