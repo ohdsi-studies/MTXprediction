@@ -1,5 +1,6 @@
-# code to create analysis script
 library(Strategus) # need https://github.com/OHDSI/Strategus/tree/v1.0-plpv-mt-modules branch
+library(CohortIncidence)
+
 
 #====================================================================================
 #COHORT IDS
@@ -12,16 +13,16 @@ library(Strategus)
 ROhdsiWebApi::authorizeWebApi(
   baseUrl = Sys.getenv('baseUrl'), 
   authMethod = 'windows', 
-  webApiUsername = keyring::key_get('webApiUsername', 'all'), 
-  webApiPassword =  keyring::key_get('webApiPassword', 'all')
-    )
+  webApiUsername = Sys.getenv('webApiUsername'), 
+  webApiPassword =  Sys.getenv('webApiPassword')
+)
 
 # get the cohort ids from ATLAS used as the targets and outcomes
 cohortDefinitionSet <- ROhdsiWebApi::exportCohortDefinitionSet(
   cohortIds = c(targetIds, outcomeIds), 
   generateStats = T,
   baseUrl = Sys.getenv('baseUrl')
-  )
+)
 
 #=========================================================================================
 #COHORT DIAGNOSTICS SPECIFICATIONS
@@ -57,29 +58,81 @@ cgModuleSpecifications <- cgModuleSettingsCreator$createModuleSpecifications()
 #CohortIncidence
 #===============================================================================================
 
+# Give a name to the outcome ID set 
+oList <- cohortDefinitionSet %>%
+  filter(.data$cohortId %in% outcomeIds) %>%
+  mutate(outcomeCohortId = cohortId, outcomeCohortName = cohortName) %>%
+  select(outcomeCohortId, outcomeCohortName) %>%
+  mutate(cleanWindow = 0)
+
+#TAR
+timeAtRisks <- tibble(
+  riskWindowStart  = 0,
+  startAnchor = 'cohort start',
+  riskWindowEnd  = 365,
+  endAnchor = 'cohort end'
+)
+
 ciModuleSettingsCreator <- CohortIncidenceModule$new()
 
-tars <- list(
-  CohortIncidence::createTimeAtRiskDef(id = 1, startWith = "start", endWith = "end"),
-  CohortIncidence::createTimeAtRiskDef(id = 2, startWith = "start", endWith = "start", endOffset = 365)
+tcIds <- cohortDefinitionSet %>%
+  filter(!cohortId %in% oList$outcomeCohortId & isSubset) %>%
+  pull(cohortId)
+targetList <- lapply(
+  tcIds,
+  function(cohortId) {
+    CohortIncidence::createCohortRef(
+      id = cohortId, 
+      name = cohortDefinitionSet$cohortName[cohortDefinitionSet$cohortId == cohortId]
+    )
+  }
+)
+outcomeList <- lapply(
+  seq_len(nrow(oList)),
+  function(i) {
+    CohortIncidence::createOutcomeDef(
+      id = i, 
+      name = cohortDefinitionSet$cohortName[cohortDefinitionSet$cohortId == oList$outcomeCohortId[i]], 
+      cohortId = oList$outcomeCohortId[i], 
+      cleanWindow = oList$cleanWindow[i]
+    )
+  }
 )
 
+tars <- list()
+for (i in seq_len(nrow(timeAtRisks))) {
+  tars[[i]] <- CohortIncidence::createTimeAtRiskDef(
+    id = i, 
+    startWith = gsub("cohort ", "", timeAtRisks$startAnchor[i]), 
+    endWith = gsub("cohort ", "", timeAtRisks$endAnchor[i]), 
+    startOffset = timeAtRisks$riskWindowStart[i],
+    endOffset = timeAtRisks$riskWindowEnd[i]
+  )
+}
 analysis1 <- CohortIncidence::createIncidenceAnalysis(
-  targets = targetIds,
-  outcomes = outcomeIds,
-  tars = c(1, 2)
+  targets = tcIds,
+  outcomes = seq_len(nrow(oList)),
+  tars = seq_along(tars)
 )
+
 
 irDesign <- CohortIncidence::createIncidenceDesign(
-  targetDefs = targetIds,
-  outcomeDefs = outcomeIds,
+  targetDefs = targetList,
+  outcomeDefs = outcomeList,
   tars = tars,
   analysisList = list(analysis1),
+  #studyWindow = irStudyWindow,
   strataSettings = CohortIncidence::createStrataSettings(
     byYear = TRUE,
-    byGender = TRUE
+    byGender = TRUE,
+    byAge = TRUE,
+    ageBreaks = seq(0, 110, by = 10)
   )
 )
+cohortIncidenceModuleSpecifications <- ciModuleSettingsCreator$createModuleSpecifications(
+  irDesign = irDesign$toList()
+)
+
 
 ciModuleSpecifications <- ciModuleSettingsCreator$createModuleSpecifications(
   irDesign = irDesign$toList()
@@ -88,12 +141,6 @@ ciModuleSpecifications <- ciModuleSettingsCreator$createModuleSpecifications(
 #===============================================================================================
 #TreatmentPatterns
 #===============================================================================================
-# Give a name to the outcome ID set 
-oList <- cohortDefinitionSet %>%
-  filter(.data$cohortId %in% outcomeIds) %>%
-  mutate(outcomeCohortId = cohortId, outcomeCohortName = cohortName) %>%
-  select(outcomeCohortId, outcomeCohortName) %>%
-  mutate(cleanWindow = 0)
 
 # Create dataframe for TreatmentPatterns
 cohorts <- cohortDefinitionSet %>%
@@ -128,8 +175,8 @@ tpModuleSpecifications <- tpModuleSettingsCreator$createModuleSpecifications(
 
 cModuleSettingsCreator <- CharacterizationModule$new()
 cModuleSpecifications <- cModuleSettingsCreator$createModuleSpecifications(
-  targetIds = targetIds,
-  outcomeIds = outcomeIds,
+  targetIds = cohortDefinitionSet$cohortId,
+  outcomeIds = oList$outcomeCohortId,
   minPriorObservation = 365,
   outcomeWashoutDays = 365,
   dechallengeStopInterval = 30,
@@ -140,7 +187,8 @@ cModuleSpecifications <- cModuleSettingsCreator$createModuleSpecifications(
   endAnchor = 'cohort start,
   covariateSettings = FeatureExtraction::createDefaultCovariateSettings(),
   minCharacterizationMean = .01
-)
+  )
+
 
 #===============================================================================================
 #PatientLevelPrediction
@@ -153,13 +201,13 @@ cModuleSpecifications <- cModuleSettingsCreator$createModuleSpecifications(
 analysisSpecifications <- createEmptyAnalysisSpecificiations() |>
   addSharedResources(cohortSharedResourcesSpecifications) |>
   addCohortDiagnosticsModuleSpecifications(cdModuleSpecifications) |>
-  addCohortGeneratorModuleSpecifications(cgModuleSpecifications) |>
-  addCohortIncidenceModuleSpecifications(ciModuleSpecifications) |>
-  addTreatmentPatternsModuleSpecifications(tpModuleSpecifications) |>
-  addCharacterizationModuleSpecifications(cModuleSpecifications) 
+  addCohortGeneratorModuleSpecifications(cgModuleSpecifications) 
+  
+  #addCohortIncidenceModuleSpecifications(ciModuleSpecifications) |>
+  #addTreatmentPatternsModuleSpecifications(tpModuleSpecifications) |>
+  #addCharacterizationModuleSpecifications(cModuleSpecifications) 
 
 ParallelLogger::saveSettingsToJson(
   object = analysisSpecifications,
-  fileName = "inst/study_execution_jsons/validation.json"
+  fileName = "./inst/study_execution_jsons/validation.json"
 )
-
