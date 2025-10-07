@@ -201,11 +201,10 @@ cModuleSpecifications <- cModuleSettingsCreator$createModuleSpecifications(
 analysisSpecifications <- createEmptyAnalysisSpecificiations() |>
   addSharedResources(cohortSharedResourcesSpecifications) |>
   addCohortDiagnosticsModuleSpecifications(cdModuleSpecifications) |>
-  addCohortGeneratorModuleSpecifications(cgModuleSpecifications) 
-  
-  #addCohortIncidenceModuleSpecifications(ciModuleSpecifications) |>
-  #addTreatmentPatternsModuleSpecifications(tpModuleSpecifications) |>
-  #addCharacterizationModuleSpecifications(cModuleSpecifications) 
+  addCohortGeneratorModuleSpecifications(cgModuleSpecifications) |>
+  addCohortIncidenceModuleSpecifications(ciModuleSpecifications) |>
+  addTreatmentPatternsModuleSpecifications(tpModuleSpecifications) |>
+  addCharacterizationModuleSpecifications(cModuleSpecifications) 
 
 ParallelLogger::saveSettingsToJson(
   object = analysisSpecifications,
