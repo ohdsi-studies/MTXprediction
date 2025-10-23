@@ -608,6 +608,8 @@
             "type": "event"
           }
         ],
+        "includeTreatments": "startDate",
+        "indexDateOffset": 0,
         "minEraDuration": 1,
         "eraCollapseSize": 30,
         "combinationWindow": 30,
