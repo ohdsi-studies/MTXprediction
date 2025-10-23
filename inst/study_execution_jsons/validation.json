@@ -608,14 +608,12 @@
             "type": "event"
           }
         ],
-        "includeTreatments": "startDate",
-        "indexDateOffset": 0,
         "minEraDuration": 1,
-        "eraCollapseSize": 7,
-        "combinationWindow": 1,
-        "minPostCombinationDuration": 1,
-        "filterTreatments": "All",
-        "maxPathLength": 7,
+        "eraCollapseSize": 30,
+        "combinationWindow": 30,
+        "minPostCombinationDuration": 30,
+        "filterTreatments": "First",
+        "maxPathLength": 5,
         "ageWindow": 10,
         "minCellCount": 5,
         "censorType": "minCellCount"
