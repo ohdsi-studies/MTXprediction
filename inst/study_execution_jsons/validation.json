@@ -608,17 +608,21 @@
             "type": "event"
           }
         ],
-        "includeTreatments": "startDate",
-        "indexDateOffset": 0,
         "minEraDuration": 1,
         "eraCollapseSize": 30,
         "combinationWindow": 30,
         "minPostCombinationDuration": 30,
         "filterTreatments": "First",
         "maxPathLength": 5,
-        "ageWindow": 10,
-        "minCellCount": 5,
-        "censorType": "minCellCount"
+        "ageWindow": 5,
+        "minCellCount": 1,
+        "censorType": "minCellCount",
+        "overlapMethod": "truncate",
+        "concatTargets": true,
+        "startAnchor": "startDate",
+        "windowStart": 0,
+        "endAnchor": "endDate",
+        "windowEnd": 0
       },
       "attr_class": ["ModuleSpecifications", "TreatmentPatternsModuleSpecifications"]
     },
