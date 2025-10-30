@@ -223,48 +223,13 @@
       "settings": {
         "cohorts": [
           {
-            "cohortId": 21773,
-            "cohortName": "Inflammatory diseases MTXprediction",
-            "type": "target"
-          },
-          {
-            "cohortId": 21769,
-            "cohortName": "Psoriasis MTXprediction",
-            "type": "target"
-          },
-          {
             "cohortId": 21770,
             "cohortName": "Atopic dermatitis MTXprediction",
             "type": "target"
           },
           {
-            "cohortId": 21772,
-            "cohortName": "Rheumatoid arthritis MTXprediction",
-            "type": "target"
-          },
-          {
-            "cohortId": 21771,
-            "cohortName": "Psoriatic arthritis MTXprediction",
-            "type": "target"
-          },
-          {
-            "cohortId": 21803,
-            "cohortName": "Drugs combined Inflammatory diseases MTXprediction",
-            "type": "event"
-          },
-          {
-            "cohortId": 21804,
-            "cohortName": "Drugs combined psoriasis MTXprediction",
-            "type": "event"
-          },
-          {
             "cohortId": 21805,
             "cohortName": "Drugs combined atopic dermatitis MTXprediction",
-            "type": "event"
-          },
-          {
-            "cohortId": 21806,
-            "cohortName": "Drugs combined psoriatic arthritis AND OR rheumatoid arthritis MTXprediction",
             "type": "event"
           }
         ],
