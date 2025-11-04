@@ -398,9 +398,14 @@
       "settings": {
         "cohorts": [
           {
-            "cohortId": 21770,
-            "cohortName": "Atopic dermatitis MTXprediction",
+            "cohortId": 21769,
+            "cohortName": "Psoriasis MTXprediction",
             "type": "target"
+          },
+          {
+            "cohortId": 21669,
+            "cohortName": "Acitretin MTXprediction",
+            "type": "event"
           },
           {
             "cohortId": 21670,
@@ -408,43 +413,73 @@
             "type": "event"
           },
           {
-            "cohortId": 21780,
-            "cohortName": "Azathioprine MTXprediction",
+            "cohortId": 21671,
+            "cohortName": "Dimethyl fumarate MTXprediction",
             "type": "event"
           },
           {
-            "cohortId": 21781,
-            "cohortName": "Mycophenolate mofetil MTXprediction",
+            "cohortId": 21672,
+            "cohortName": "Adalimumab MTXprediction",
             "type": "event"
           },
           {
-            "cohortId": 21782,
-            "cohortName": "Mycophenolic acid MTXprediction",
+            "cohortId": 21673,
+            "cohortName": "Certolizumab MTXprediction",
             "type": "event"
           },
           {
-            "cohortId": 21783,
-            "cohortName": "Dupilumab MTXprediction",
+            "cohortId": 21674,
+            "cohortName": "Bimekizumab MTXprediction",
             "type": "event"
           },
           {
-            "cohortId": 21784,
-            "cohortName": "Tralokinumab MTXprediction",
+            "cohortId": 21675,
+            "cohortName": "Brodalumab MTXprediction",
             "type": "event"
           },
           {
-            "cohortId": 21789,
-            "cohortName": "Baricitinib MTXprediction",
+            "cohortId": 21676,
+            "cohortName": "Ixekizumab MTXprediction",
             "type": "event"
           },
           {
-            "cohortId": 21790,
-            "cohortName": "Upadacitinib MTXprediction",
+            "cohortId": 21677,
+            "cohortName": "Secukinumab",
             "type": "event"
           },
           {
-            "cohortId": 21791,
-            "cohortName": "Abrocitinib MTXprediction",
+            "cohortId": 21678,
+            "cohortName": "Guselkumab MTXprediction",
+            "type": "event"
+          },
+          {
+            "cohortId": 21774,
+            "cohortName": "Risankizumab MTXprediction",
+            "type": "event"
+          },
+          {
+            "cohortId": 21775,
+            "cohortName": "Tildrakizumab MTXprediction",
+            "type": "event"
+          },
+          {
+            "cohortId": 21776,
+            "cohortName": "Apremilast MTXprediction",
+            "type": "event"
+          },
+          {
+            "cohortId": 21777,
+            "cohortName": "Etanercept MTXprediction",
+            "type": "event"
+          },
+          {
+            "cohortId": 21778,
+            "cohortName": "Infliximab MTXprediction",
+            "type": "event"
+          },
+          {
+            "cohortId": 21779,
+            "cohortName": "Ustekinumab MTXprediction",
             "type": "event"
           },
           {
