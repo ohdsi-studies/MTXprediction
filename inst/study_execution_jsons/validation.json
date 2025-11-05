@@ -398,8 +398,8 @@
       "settings": {
         "cohorts": [
           {
-            "cohortId": 21771,
-            "cohortName": "Psoriatic arthritis MTXprediction",
+            "cohortId": 21772,
+            "cohortName": "Rheumatoid arthritis MTXprediction",
             "type": "target"
           },
           {
