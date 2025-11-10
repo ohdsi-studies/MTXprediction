@@ -274,12 +274,12 @@ plpModule <- PatientLevelPredictionModule$new()
 
 makeModelDesignSettings <- function(targetId, outcomeId, popSettings, covarSettings) {
   invisible(PatientLevelPrediction::createModelDesign(
-    targetId = targetId,
-    outcomeId = outcomeId,
-    restrictPlpDataSettings = PatientLevelPrediction::createRestrictPlpDataSettings(),
-    populationSettings = popSettings,
-    covariateSettings = covarSettings,
-    preprocessSettings = PatientLevelPrediction::createPreprocessSettings(),
+    targetId = 21770,
+    outcomeId = 21805,
+    restrictPlpDataSettings = PatientLevelPrediction::createRestrictPlpDataSettings(), #NOG NAAR KIJKEN
+    populationSettings = popSettings, #NOG NAAR KIJKEN
+    covariateSettings = covarSettings, #NOG NAAR KIJKEN
+    preprocessSettings = PatientLevelPrediction::createPreprocessSettings(), #NOG NAAR KIJKEN
     modelSettings = PatientLevelPrediction::setLassoLogisticRegression(),
     splitSettings = PatientLevelPrediction::createDefaultSplitSetting(),
     runCovariateSummary = T
