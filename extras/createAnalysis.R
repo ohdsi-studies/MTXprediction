@@ -272,20 +272,6 @@ cModuleSpecifications <- cModuleSettingsCreator$createModuleSpecifications(
 
 plpModule <- PatientLevelPredictionModule$new()
 
-makeModelDesignSettings <- function(targetId, outcomeId, popSettings, covarSettings) {
-  invisible(PatientLevelPrediction::createModelDesign(
-    targetId = 21770,
-    outcomeId = 21805,
-    restrictPlpDataSettings = PatientLevelPrediction::createRestrictPlpDataSettings(), #NOG NAAR KIJKEN
-    populationSettings = popSettings, #NOG NAAR KIJKEN
-    covariateSettings = covarSettings, #NOG NAAR KIJKEN
-    preprocessSettings = PatientLevelPrediction::createPreprocessSettings(), #NOG NAAR KIJKEN
-    modelSettings = PatientLevelPrediction::setLassoLogisticRegression(),
-    splitSettings = PatientLevelPrediction::createDefaultSplitSetting(),
-    runCovariateSummary = T
-  ))
-}
-
 plpPopulationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
   startAnchor = "cohort start",
   riskWindowStart = 1,
@@ -293,27 +279,24 @@ plpPopulationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
   riskWindowEnd = 365,
   minTimeAtRisk = 1
 )
+
 plpCovarSettings <- FeatureExtraction::createDefaultCovariateSettings()
 
-modelDesignList <- list()
-for (i in 1:length(exposureOfInterestIds)) {
-  for (j in 1:length(outcomeOfInterestIds)) {
-    modelDesignList <- append(
-      modelDesignList,
-      list(
-        makeModelDesignSettings(
-          targetId = exposureOfInterestIds[i],
-          outcomeId = outcomeOfInterestIds[j],
-          popSettings = plpPopulationSettings,
-          covarSettings = plpCovarSettings
-        )
-      )
-    )
-  }
+modelDesign <- PatientLevelPrediction::createModelDesign(
+    targetId = 21770,
+    outcomeId = 21805,
+    restrictPlpDataSettings = PatientLevelPrediction::createRestrictPlpDataSettings(), #NOG NAAR KIJKEN
+    populationSettings = plpPopulationSettings,
+    covariateSettings = plpCovarSettings,
+    preprocessSettings = PatientLevelPrediction::createPreprocessSettings(), #NOG NAAR KIJKEN
+    modelSettings = PatientLevelPrediction::setLassoLogisticRegression(),
+    splitSettings = PatientLevelPrediction::createDefaultSplitSetting(),
+    runCovariateSummary = T
+  ))
 }
 
 plpModuleSpecifications <- plpModule$createModuleSpecifications(
-  modelDesignList = modelDesignList
+  modelDesignList = list(modelDesign)
 )
 
 #===============================================================================================
