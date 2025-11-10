@@ -270,17 +270,51 @@ cModuleSpecifications <- cModuleSettingsCreator$createModuleSpecifications(
 #PatientLevelPrediction
 #===============================================================================================
 
+plpModule <- PatientLevelPredictionModule$new()
 
+makeModelDesignSettings <- function(targetId, outcomeId, popSettings, covarSettings) {
+  invisible(PatientLevelPrediction::createModelDesign(
+    targetId = targetId,
+    outcomeId = outcomeId,
+    restrictPlpDataSettings = PatientLevelPrediction::createRestrictPlpDataSettings(),
+    populationSettings = popSettings,
+    covariateSettings = covarSettings,
+    preprocessSettings = PatientLevelPrediction::createPreprocessSettings(),
+    modelSettings = PatientLevelPrediction::setLassoLogisticRegression(),
+    splitSettings = PatientLevelPrediction::createDefaultSplitSetting(),
+    runCovariateSummary = T
+  ))
+}
 
+plpPopulationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
+  startAnchor = "cohort start",
+  riskWindowStart = 1,
+  endAnchor = "cohort start",
+  riskWindowEnd = 365,
+  minTimeAtRisk = 1
+)
+plpCovarSettings <- FeatureExtraction::createDefaultCovariateSettings()
 
+modelDesignList <- list()
+for (i in 1:length(exposureOfInterestIds)) {
+  for (j in 1:length(outcomeOfInterestIds)) {
+    modelDesignList <- append(
+      modelDesignList,
+      list(
+        makeModelDesignSettings(
+          targetId = exposureOfInterestIds[i],
+          outcomeId = outcomeOfInterestIds[j],
+          popSettings = plpPopulationSettings,
+          covarSettings = plpCovarSettings
+        )
+      )
+    )
+  }
+}
 
-
-
-
-
-
-
-
+plpModuleSpecifications <- plpModule$createModuleSpecifications(
+  modelDesignList = modelDesignList
+)
 
 #===============================================================================================
 #ANALYSIS SPECIFICATIONS CDM MODULES
@@ -295,7 +329,8 @@ analysisSpecifications <- createEmptyAnalysisSpecifications() |>
   #addTreatmentPatternsModuleSpecifications(tpModuleSpecificationsP) |>
   #addTreatmentPatternsModuleSpecifications(tpModuleSpecificationsPA) |>
   #addTreatmentPatternsModuleSpecifications(tpModuleSpecificationsRA) |>
-  addCharacterizationModuleSpecifications(cModuleSpecifications) 
+  addCharacterizationModuleSpecifications(cModuleSpecifications) |>
+  addModuleSpecifications(plpModuleSpecifications)
 
 ParallelLogger::saveSettingsToJson(
   object = analysisSpecifications,
