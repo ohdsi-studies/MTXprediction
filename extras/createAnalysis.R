@@ -331,7 +331,7 @@ analysisSpecifications <- createEmptyAnalysisSpecifications() |>
   #addTreatmentPatternsModuleSpecifications(tpModuleSpecificationsPA) |>
   #addTreatmentPatternsModuleSpecifications(tpModuleSpecificationsRA) |>
   addCharacterizationModuleSpecifications(cModuleSpecifications) |>
-  addModuleSpecifications(plpModuleSpecifications)
+  addPatientLevelPredictionModuleSpecifications(plpModuleSpecifications)
 
 ParallelLogger::saveSettingsToJson(
   object = analysisSpecifications,
