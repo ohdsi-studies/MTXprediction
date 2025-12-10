@@ -77,7 +77,7 @@ outcomes <- list(
 tars <- list(
   CohortIncidence::createTimeAtRiskDef(id=1,startWith="start", startOffset = 0, endWith="end", endOffset = 183), 
   CohortIncidence::createTimeAtRiskDef(id=2,startWith="start", startOffset = 0, endWith="end",endOffset=365) 
-  )
+)
 
 analysis1 <- CohortIncidence::createIncidenceAnalysis(
   targets = c(21773,21769,21770,21772,21771),
@@ -264,7 +264,7 @@ cModuleSpecifications <- cModuleSettingsCreator$createModuleSpecifications(
   endAnchor = 'cohort start',
   covariateSettings = FeatureExtraction::createDefaultCovariateSettings(),
   minCharacterizationMean = .01
-  )
+)
 
 #===============================================================================================
 #PatientLevelPrediction
@@ -272,6 +272,7 @@ cModuleSpecifications <- cModuleSettingsCreator$createModuleSpecifications(
 
 plpModule <- PatientLevelPredictionModule$new()
 
+#Set time-at-risk window of 365 days
 plpPopulationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
   startAnchor = "cohort start",
   riskWindowStart = 1,
@@ -280,20 +281,37 @@ plpPopulationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
   minTimeAtRisk = 1
 )
 
+#Specify coviariatesettings
 plpCovarSettings <- FeatureExtraction::createDefaultCovariateSettings()
 
+#Limit to time period from 2017 to 2025
+plprestrictPlpDataSettings <- createRestrictPlpDataSettings(
+  studyStartDate = "20170104",
+  studyEndDate = "20250112",
+  firstExposureOnly = TRUE,
+  washoutPeriod = 365,
+  sampleSize = NULL
+)
+
+#Set preprocess settings
+plppreprocessSettings <-createPreprocessSettings(
+    minFraction = 0.001,
+    normalize = TRUE,
+    removeRedundancy = TRUE
+)
+
+#modelDesigns
 modelDesign <- PatientLevelPrediction::createModelDesign(
-    targetId = 21770,
-    outcomeId = 21805,
-    restrictPlpDataSettings = PatientLevelPrediction::createRestrictPlpDataSettings(), #NOG NAAR KIJKEN
-    populationSettings = plpPopulationSettings,
-    covariateSettings = plpCovarSettings,
-    preprocessSettings = PatientLevelPrediction::createPreprocessSettings(), #NOG NAAR KIJKEN
-    modelSettings = PatientLevelPrediction::setLassoLogisticRegression(),
-    splitSettings = PatientLevelPrediction::createDefaultSplitSetting(),
-    runCovariateSummary = T
-  ))
-}
+  targetId = 21770,
+  outcomeId = 21805,
+  restrictPlpDataSettings = plprestrictPlpDataSettings, 
+  populationSettings = plpPopulationSettings,
+  covariateSettings = plpCovarSettings,
+  preprocessSettings = plppreprocessSettings, 
+  modelSettings = PatientLevelPrediction::setLassoLogisticRegression(),
+  splitSettings = PatientLevelPrediction::createDefaultSplitSetting(),
+  runCovariateSummary = T
+)
 
 plpModuleSpecifications <- plpModule$createModuleSpecifications(
   modelDesignList = list(modelDesign)
