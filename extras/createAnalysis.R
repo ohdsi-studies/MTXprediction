@@ -328,8 +328,6 @@ modelDesign <- PatientLevelPrediction::createModelDesign(
   runCovariateSummary = T
 )
 
-?setLassoLogisticRegression()
-
 plpModuleSpecifications <- plpModule$createModuleSpecifications(
   modelDesignList = list(modelDesign)
 )
