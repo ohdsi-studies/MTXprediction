@@ -692,7 +692,7 @@
                   "modelType": "logistic",
                   "addIntercept": true,
                   "useControl": true,
-                  "seed": 97205751,
+                  "seed": 52444353,
                   "name": "Lasso Logistic Regression",
                   "threads": -1,
                   "tolerance": 2e-06,
@@ -707,7 +707,7 @@
             "splitSettings": {
               "test": 0.25,
               "train": 0.75,
-              "seed": 20921,
+              "seed": 75656,
               "nfold": 3,
               "attr_class": "splitSettings",
               "attr_fun": "randomSplitter"
