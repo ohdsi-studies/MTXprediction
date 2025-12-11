@@ -295,9 +295,24 @@ plprestrictPlpDataSettings <- createRestrictPlpDataSettings(
 
 #Set preprocess settings
 plppreprocessSettings <-createPreprocessSettings(
-    minFraction = 0.001,
-    normalize = TRUE,
-    removeRedundancy = TRUE
+  minFraction = 0.001,
+  normalize = TRUE,
+  removeRedundancy = TRUE
+)
+
+#LassoLogisticRegression
+LassoLogisticRegression <- setLassoLogisticRegression(
+  variance = 0.01,
+  seed = NULL,
+  includeCovariateIds = c(),
+  noShrinkage = c(0),
+  threads = -1,
+  forceIntercept = FALSE,
+  upperLimit = 20,
+  lowerLimit = 0.01,
+  tolerance = 2e-06,
+  maxIterations = 3000,
+  priorCoefs = NULL
 )
 
 #modelDesigns
@@ -308,10 +323,12 @@ modelDesign <- PatientLevelPrediction::createModelDesign(
   populationSettings = plpPopulationSettings,
   covariateSettings = plpCovarSettings,
   preprocessSettings = plppreprocessSettings, 
-  modelSettings = PatientLevelPrediction::setLassoLogisticRegression(),
+  modelSettings = LassoLogisticRegression,
   splitSettings = PatientLevelPrediction::createDefaultSplitSetting(),
   runCovariateSummary = T
 )
+
+?setLassoLogisticRegression()
 
 plpModuleSpecifications <- plpModule$createModuleSpecifications(
   modelDesignList = list(modelDesign)
